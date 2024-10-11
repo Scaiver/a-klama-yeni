@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş Sebebli Telefon</title>
+    <style>
+        /* Genel Stil */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(120deg, #84fab0, #8fd3f4); /* Daha iyi bir arka plan */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .phones-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 90%;
+            max-width: 1000px;
+            gap: 20px;
+        }
+
+        /* Telefon Stil */
+        .phone {
+            width: 280px;
+            height: 580px;
+            background: linear-gradient(145deg, #1c1c1e, #292929);
+            border-radius: 45px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5); /* Gölge daha belirgin */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        /* Dinamik Ada */
+        .phone .dynamic-island {
+            width: 160px; /* Boyut küçültüldü */
+            height: 40px; /* Yükseklik aynı kaldı */
+            background: #000; /* Düz siyah arka plan */
+            border-radius: 20px; /* Yuvarlama */
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%); /* Ortalamak için */
+            display: flex;
+            justify-content: space-between; /* Logo ve yazıyı yan yana yerleştirir */
+            align-items: center;
+            color: white;
+            font-size: 14px; /* Yazı boyutu */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            padding: 0 10px; /* Sağdan ve soldan boşluk */
+        }
+
+        /* Telefon Ekranı */
+        .screen {
+            width: 260px;
+            height: 540px;
+            background-color: #fff;
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: inset 0px 4px 15px rgba(0, 0, 0, 0.1); /* Ekrana iç gölge */
+        }
+
+        /* Arama Ekranı */
+        .call-info {
+            margin-top: 40px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .call-info h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .call-info select {
+            width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .call-info input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .call-info button {
+            background-color: #007aff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .call-info button:hover {
+            background-color: #005bb5;
+        }
+
+        /* Gelen Arama Ekranı */
+        .incoming-call {
+            font-size: 20px;
+            color: #333;
+            margin-top: 40px;
+            display: none; /* Başlangıçta görünmesin */
+        }
+
+        .incoming-call .caller-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .incoming-call .call-reason {
+            font-size: 18px;
+            color: #555; /* Daha açık gri ton */
+            margin-bottom: 20px;
+        }
+
+        .incoming-call button {
+            background-color: #34c759;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+        }
+
+        .incoming-call button.reject {
+            background-color: #ff3b30;
+        }
+
+        .incoming-call button:hover {
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="phones-container">
+    <!-- Arayan Telefon -->
+    <div class="phone">
+        <div class="dynamic-island" id="callerDynamicIsland">
+            <div>Arama Yapılıyor</div> <!-- Dinamik adada yazı değiştirildi -->
+            <img src="https://img.icons8.com/material-outlined/24/ffffff/wifi.png" alt="Wi-Fi Durumu">
+        </div>
+        <div class="screen">
+            <div class="call-info">
+                <h2>Arayan Telefon</h2>
+                <select id="contactList">
+                    <option value="">Kişi Seç</option>
+                    <option value="Ahmet">Babam</option>
+                    <option value="Mehmet">Annem</option>
+                    <option value="Ayşe">Ayşe</option>
+                    <option value="Fatma">Mete</option>
+                </select>
+                <input type="text" id="callReason" placeholder="Arama sebebi girin">
+                <button onclick="startCall()">Aramayı Başlat</button>
+                <p id="callStatus">Durum: Bekleniyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aranan Telefon -->
+    <div class="phone">
+        <div class="dynamic-island" id="receiverDynamicIsland">
+            <div>Arama Geliyor</div> <!-- Dinamik adada yazı eklendi -->
+            <img src="https://img.icons8.com/material-outlined/24/ffffff/wifi.png" alt="Wi-Fi Durumu">
+        </div>
+        <div class="screen">
+            <div class="incoming-call" id="incomingCallScreen">
+                <p class="caller-name" id="callerName">Arayan: </p>
+                <p class="call-reason" id="callReasonDisplay">Sebep: </p>
+                <button class="accept" onclick="acceptCall()">Kabul Et</button>
+                <button class="reject" onclick="rejectCall()">Reddet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function startCall() {
+        const selectedContact = document.getElementById('contactList').value;
+        const callReason = document.getElementById('callReason').value;
+        const callStatus = document.getElementById('callStatus');
+        const callerName = document.getElementById('callerName');
+        const callReasonDisplay = document.getElementById('callReasonDisplay');
+        const incomingCallScreen = document.getElementById('incomingCallScreen');
+
+        if (selectedContact && callReason) {
+            callStatus.textContent = 'Durum: Aranıyor...';
+            callerName.textContent = 'Arayan: ' + selectedContact; // Sadece arayan ismi
+            callReasonDisplay.textContent = 'Sebep: ' + callReason; // Sebep bilgisi
+            incomingCallScreen.style.display = 'block'; // Kabul Et ve Reddet butonları arama başladığında görünecek
+        } else if (!selectedContact) {
+            callStatus.textContent = 'Lütfen bir kişi seçin.';
+        } else {
+            callStatus.textContent = 'Lütfen bir sebep girin.';
+        }
+    }
+
+    function acceptCall() {
+        alert("Arama kabul edildi.");
+    }
+
+    function rejectCall() {
+        alert("Arama reddedildi.");
+    }
+</script>
+
+</body>
+</html>
